@@ -8,6 +8,23 @@ body {
   -webkit-app-region: drag;
 }
 
-button, a, input, select {
+button, a, input, select, textarea {
   -webkit-app-region: no-drag;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
