@@ -15,8 +15,8 @@ export default function InsightCards({ insights }: Props) {
 
   return (
     <div>
-      <h2 className="text-sm font-semibold text-yellow-400 mb-1.5">&#x1F4A1; 인사이트</h2>
-      <div className="space-y-2">
+      <h2 style={{ fontSize: '13px', fontWeight: 600, color: '#d97706', marginBottom: '6px' }}>&#x1F4A1; 인사이트</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {insights.map((insight, i) => (
           <InsightCardItem key={i} insight={insight} />
         ))}
@@ -31,24 +31,32 @@ function InsightCardItem({ insight }: { insight: InsightItem }) {
   return (
     <button
       onClick={() => setExpanded(!expanded)}
-      className="w-full text-left bg-white/5 rounded-lg p-3 hover:bg-white/10 transition"
+      style={{
+        width: '100%',
+        textAlign: 'left' as const,
+        background: '#f9fafb',
+        border: '1px solid #f3f4f6',
+        borderRadius: '8px',
+        padding: '12px',
+        cursor: 'pointer'
+      }}
     >
-      <div className="flex justify-between items-start">
-        <h3 className="text-sm font-medium text-gray-100">{insight.title}</h3>
-        <span className="text-gray-500 text-xs ml-2">{expanded ? '▲' : '▼'}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 500, color: '#1f2937', margin: 0 }}>{insight.title}</h3>
+        <span style={{ color: '#9ca3af', fontSize: '12px', marginLeft: '8px' }}>{expanded ? '▲' : '▼'}</span>
       </div>
       {expanded && (
-        <div className="mt-2">
-          <p className="text-xs text-gray-300 leading-relaxed">{insight.body}</p>
+        <div style={{ marginTop: '8px' }}>
+          <p style={{ fontSize: '12px', color: '#4b5563', lineHeight: 1.6, margin: 0 }}>{insight.body}</p>
           {insight.relatedUrls.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
+            <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap' as const, gap: '4px' }}>
               {insight.relatedUrls.map((url, i) => (
                 <a
                   key={i}
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-blue-400 hover:underline"
+                  style={{ fontSize: '12px', color: '#3b82f6', textDecoration: 'none' }}
                   onClick={e => e.stopPropagation()}
                 >
                   [{i + 1}] 원문

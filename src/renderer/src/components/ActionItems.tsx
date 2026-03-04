@@ -8,9 +8,9 @@ interface Props {
 }
 
 const categoryLabel: Record<string, string> = {
-  study: '📖 학습',
-  apply: '🛠 적용',
-  explore: '🔍 탐색'
+  study: '학습',
+  apply: '적용',
+  explore: '탐색'
 }
 
 export default function ActionItems({ actions }: Props) {
@@ -18,11 +18,18 @@ export default function ActionItems({ actions }: Props) {
 
   return (
     <div>
-      <h2 className="text-sm font-semibold text-green-400 mb-1.5">🛠 실무 적용 제안</h2>
-      <ul className="space-y-1.5">
+      <h2 style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', marginBottom: '6px' }}>실무 적용 제안</h2>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {actions.map((action, i) => (
-          <li key={i} className="text-sm text-gray-200 flex gap-2 items-start">
-            <span className="text-xs bg-white/10 rounded px-1.5 py-0.5 shrink-0">
+          <li key={i} style={{ fontSize: '13px', color: '#374151', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+            <span style={{
+              fontSize: '11px',
+              background: '#f3f4f6',
+              color: '#6b7280',
+              borderRadius: '4px',
+              padding: '2px 6px',
+              flexShrink: 0
+            }}>
               {categoryLabel[action.category] || action.category}
             </span>
             <span>{action.text}</span>

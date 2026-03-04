@@ -12,11 +12,11 @@ export default function TrendSummary({ trends }: Props) {
 
   return (
     <div>
-      <h2 className="text-sm font-semibold text-blue-400 mb-1.5">&#x1F4CC; 오늘의 핵심 트렌드</h2>
-      <ul className="space-y-1">
+      <h2 style={{ fontSize: '13px', fontWeight: 600, color: '#2563eb', marginBottom: '6px' }}>&#x1F4CC; 오늘의 핵심 트렌드</h2>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {trends.map((trend, i) => (
-          <li key={i} className="text-sm text-gray-200 flex gap-2">
-            <span className="text-gray-500">&bull;</span>
+          <li key={i} style={{ fontSize: '13px', color: '#374151', display: 'flex', gap: '8px' }}>
+            <span style={{ color: '#9ca3af' }}>&bull;</span>
             <span>{trend.text}</span>
           </li>
         ))}

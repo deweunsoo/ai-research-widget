@@ -10,26 +10,35 @@ export default function DateNav({ currentDate, onDateChange }: Props) {
     onDateChange(date.toISOString().split('T')[0])
   }
 
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr + 'T00:00:00')
+    const days = ['일', '월', '화', '수', '목', '금', '토']
+    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} (${days[date.getDay()]})`
+  }
+
   return (
-    <div className="flex items-center justify-between pt-2 border-t border-white/10">
-      <button
-        onClick={() => navigate(-1)}
-        className="text-xs text-gray-400 hover:text-white transition px-2 py-1"
-      >
-        ◀ 어제
-      </button>
-      <button
-        onClick={() => onDateChange(new Date().toISOString().split('T')[0])}
-        className="text-xs text-gray-400 hover:text-white transition px-2 py-1"
-      >
-        📚 오늘
-      </button>
-      <button
-        onClick={() => navigate(1)}
-        className="text-xs text-gray-400 hover:text-white transition px-2 py-1"
-      >
-        내일 ▶
-      </button>
+    <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
+      <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', marginBottom: '8px' }}>{formatDate(currentDate)}</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #e5e7eb', paddingTop: '8px' }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{ fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+        >
+          ◀ 어제
+        </button>
+        <button
+          onClick={() => onDateChange(new Date().toISOString().split('T')[0])}
+          style={{ fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+        >
+          오늘
+        </button>
+        <button
+          onClick={() => navigate(1)}
+          style={{ fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+        >
+          내일 ▶
+        </button>
+      </div>
     </div>
   )
 }
