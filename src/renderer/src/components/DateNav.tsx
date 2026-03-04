@@ -18,23 +18,23 @@ export default function DateNav({ currentDate, onDateChange }: Props) {
 
   return (
     <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
-      <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', marginBottom: '8px' }}>{formatDate(currentDate)}</p>
+      <p style={{ textAlign: 'center', fontSize: '15px', color: '#9ca3af', marginBottom: '8px' }}>{formatDate(currentDate)}</p>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #e5e7eb', paddingTop: '8px' }}>
         <button
           onClick={() => navigate(-1)}
-          style={{ fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+          style={{ fontSize: '15px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
         >
           ◀ 어제
         </button>
         <button
           onClick={() => onDateChange(new Date().toISOString().split('T')[0])}
-          style={{ fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+          style={{ fontSize: '15px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
         >
           오늘
         </button>
         <button
           onClick={() => navigate(1)}
-          style={{ fontSize: '12px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+          style={{ fontSize: '15px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
         >
           내일 ▶
         </button>

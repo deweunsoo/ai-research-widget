@@ -18,12 +18,12 @@ export default function ActionItems({ actions }: Props) {
 
   return (
     <div>
-      <h2 style={{ fontSize: '13px', fontWeight: 600, color: '#16a34a', marginBottom: '6px' }}>실무 적용 제안</h2>
+      <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#16a34a', marginBottom: '8px' }}>실무 적용 제안</h2>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {actions.map((action, i) => (
-          <li key={i} style={{ fontSize: '13px', color: '#374151', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+          <li key={i} style={{ fontSize: '16px', color: '#374151', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
             <span style={{
-              fontSize: '11px',
+              fontSize: '14px',
               background: '#f3f4f6',
               color: '#6b7280',
               borderRadius: '4px',

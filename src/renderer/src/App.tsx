@@ -14,23 +14,21 @@ export default function App() {
 
   return (
     <div
+      className="glass-panel"
       style={{
         height: '100vh',
         width: '100vw',
-        borderRadius: '16px',
-        background: '#ffffff',
-        color: '#1f2937',
-        padding: '16px',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        border: '1px solid #e5e7eb',
         boxSizing: 'border-box',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
       }}
     >
       {showSettings ? (
-        <Settings onBack={() => setShowSettings(false)} onRunNow={runNow} />
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <Settings onBack={() => setShowSettings(false)} onRunNow={runNow} />
+        </div>
       ) : (
         <>
           <Header
@@ -41,7 +39,7 @@ export default function App() {
             loading={loading}
           />
 
-          <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
+          <div className="scrollable" style={{ flex: 1, overflowY: 'auto', paddingRight: '0px' }}>
             {loading && !research && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '12px' }}>
                 <div style={{ position: 'relative' }}>

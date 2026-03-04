@@ -1,10 +1,11 @@
 @import "tailwindcss";
+@import "./spring-ds-tokens.css";
 
-body {
+html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: transparent;
+  background: transparent !important;
   -webkit-app-region: drag;
 }
 
@@ -12,6 +13,18 @@ button, a, input, select, textarea {
   -webkit-app-region: no-drag;
 }
 
+.scrollable {
+  -webkit-app-region: no-drag;
+}
+
+.glass-panel {
+  padding: 18px 18px 16px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 24px;
+  color: rgba(0, 0, 0, 0.75);
+}
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -27,4 +40,25 @@ button, a, input, select, textarea {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.2);
+}
+
+.header-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+}
+
+.header-icon-btn:hover {
+  transform: scale(1.15);
+}
+
+.header-icon-btn:active {
+  transform: scale(0.95);
 }

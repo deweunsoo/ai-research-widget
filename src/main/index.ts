@@ -15,12 +15,18 @@ let mainWindow: BrowserWindow | null = null
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
-    width: 380,
-    height: 520,
+    width: 460,
+    height: 640,
     frame: false,
     transparent: true,
+    vibrancy: 'under-window',
+    visualEffectState: 'active',
     alwaysOnTop: true,
-    resizable: false,
+    resizable: true,
+    minWidth: 360,
+    minHeight: 480,
+    maxWidth: 600,
+    maxHeight: 900,
     skipTaskbar: true,
     show: false,
     webPreferences: {
@@ -32,7 +38,7 @@ function createWindow(): void {
 
   const display = screen.getPrimaryDisplay()
   const { width, height } = display.workAreaSize
-  mainWindow.setPosition(width - 400, height - 540)
+  mainWindow.setPosition(width - 480, height - 660)
 
   mainWindow.on('ready-to-show', () => mainWindow?.show())
 

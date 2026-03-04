@@ -1,0 +1,265 @@
+/**
+ * Spring Design System - Button Component
+ *
+ * Uses CSS Variables from:
+ *   - colors.css: --color-{accent,gray,secondary,error}-{1-12}
+ *   - components.css: --btn-height-{1-7}
+ *   - spacing.css: --spacing-{1-12}
+ *   - radius.css: --radius-{1-9}
+ *   - typography.css: --font-*
+ */
+
+/* ============================================================================
+   Base Button
+   ============================================================================ */
+
+.sds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family-text);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  outline: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.sds-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-accent-8);
+}
+
+.sds-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   Sizes (using --btn-height-* tokens)
+   ============================================================================ */
+
+.sds-btn--size-1 {
+  height: var(--btn-height-1);
+  padding: 0 var(--spacing-2);
+  font-size: var(--font-size-2);
+  line-height: var(--line-height-2);
+  border-radius: var(--radius-3);
+}
+
+.sds-btn--size-2 {
+  height: var(--btn-height-2);
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-3);
+  line-height: var(--line-height-3);
+  border-radius: var(--radius-4);
+}
+
+.sds-btn--size-3 {
+  height: var(--btn-height-3);
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-3);
+  line-height: var(--line-height-3);
+  border-radius: var(--radius-4);
+}
+
+.sds-btn--size-4 {
+  height: var(--btn-height-4);
+  padding: 0 var(--spacing-5);
+  font-size: var(--font-size-4);
+  line-height: var(--line-height-4);
+  border-radius: var(--radius-5);
+}
+
+.sds-btn--size-5 {
+  height: var(--btn-height-5);
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-5);
+  line-height: var(--line-height-5);
+  border-radius: var(--radius-7);
+}
+
+.sds-btn--size-6 {
+  height: var(--btn-height-6);
+  padding: 0 var(--spacing-7);
+  font-size: var(--font-size-5);
+  line-height: var(--line-height-5);
+  border-radius: var(--radius-7);
+}
+
+.sds-btn--size-7 {
+  height: var(--btn-height-7);
+  padding: 0 var(--spacing-8);
+  font-size: var(--font-size-6);
+  line-height: var(--line-height-6);
+  border-radius: var(--radius-7);
+}
+
+/* ============================================================================
+   Icon Only (square buttons)
+   ============================================================================ */
+
+.sds-btn--icon-only.sds-btn--size-1 {
+  width: var(--btn-height-1);
+  padding: 0;
+}
+
+.sds-btn--icon-only.sds-btn--size-2 {
+  width: var(--btn-height-2);
+  padding: 0;
+}
+
+.sds-btn--icon-only.sds-btn--size-3 {
+  width: var(--btn-height-3);
+  padding: 0;
+}
+
+.sds-btn--icon-only.sds-btn--size-4 {
+  width: var(--btn-height-4);
+  padding: 0;
+}
+
+.sds-btn--icon-only.sds-btn--size-5 {
+  width: var(--btn-height-5);
+  padding: 0;
+}
+
+.sds-btn--icon-only.sds-btn--size-6 {
+  width: var(--btn-height-6);
+  padding: 0;
+}
+
+.sds-btn--icon-only.sds-btn--size-7 {
+  width: var(--btn-height-7);
+  padding: 0;
+}
+
+/* ============================================================================
+   Full Width
+   ============================================================================ */
+
+.sds-btn--full-width {
+  width: 100%;
+}
+
+/* ============================================================================
+   Variant: Ghost (Text only)
+   ============================================================================ */
+
+/* Accent */
+.sds-btn--ghost.sds-btn--accent {
+  background-color: transparent;
+  color: var(--color-accent-9);
+}
+
+.sds-btn--ghost.sds-btn--accent:hover:not(:disabled) {
+  background-color: var(--color-accent-2);
+}
+
+.sds-btn--ghost.sds-btn--accent:active:not(:disabled) {
+  background-color: var(--color-accent-3);
+}
+
+.sds-btn--ghost.sds-btn--accent:disabled {
+  color: var(--color-gray-8);
+}
+
+/* Gray */
+.sds-btn--ghost.sds-btn--gray {
+  background-color: transparent;
+  color: var(--color-gray-11);
+}
+
+.sds-btn--ghost.sds-btn--gray:hover:not(:disabled) {
+  background-color: var(--color-gray-3);
+}
+
+.sds-btn--ghost.sds-btn--gray:active:not(:disabled) {
+  background-color: var(--color-gray-4);
+}
+
+.sds-btn--ghost.sds-btn--gray:disabled {
+  color: var(--color-gray-8);
+}
+
+/* ============================================================================
+   Icon
+   ============================================================================ */
+
+.sds-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sds-btn--size-1 .sds-btn__icon {
+  width: var(--btn-icon-size-1);
+  height: var(--btn-icon-size-1);
+}
+
+.sds-btn--size-2 .sds-btn__icon {
+  width: var(--btn-icon-size-2);
+  height: var(--btn-icon-size-2);
+}
+
+.sds-btn--size-3 .sds-btn__icon {
+  width: var(--btn-icon-size-3);
+  height: var(--btn-icon-size-3);
+}
+
+.sds-btn--size-4 .sds-btn__icon {
+  width: var(--btn-icon-size-4);
+  height: var(--btn-icon-size-4);
+}
+
+.sds-btn--size-5 .sds-btn__icon {
+  width: var(--btn-icon-size-5);
+  height: var(--btn-icon-size-5);
+}
+
+.sds-btn--size-6 .sds-btn__icon {
+  width: var(--btn-icon-size-6);
+  height: var(--btn-icon-size-6);
+}
+
+.sds-btn--size-7 .sds-btn__icon {
+  width: var(--btn-icon-size-7);
+  height: var(--btn-icon-size-7);
+}
+
+.sds-btn__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================================
+   Loading Spinner
+   ============================================================================ */
+
+.sds-btn--loading {
+  pointer-events: none;
+}
+
+.sds-btn__spinner {
+  width: var(--btn-spinner-size-default);
+  height: var(--btn-spinner-size-default);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: sds-btn-spin 0.6s linear infinite;
+}
+
+.sds-btn--size-5 .sds-btn__spinner,
+.sds-btn--size-6 .sds-btn__spinner,
+.sds-btn--size-7 .sds-btn__spinner {
+  width: var(--btn-spinner-size-lg);
+  height: var(--btn-spinner-size-lg);
+}
+
+@keyframes sds-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

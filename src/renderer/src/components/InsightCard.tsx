@@ -15,7 +15,7 @@ export default function InsightCards({ insights }: Props) {
 
   return (
     <div>
-      <h2 style={{ fontSize: '13px', fontWeight: 600, color: '#d97706', marginBottom: '6px' }}>&#x1F4A1; 인사이트</h2>
+      <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#d97706', marginBottom: '8px' }}>&#x1F4A1; 인사이트</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {insights.map((insight, i) => (
           <InsightCardItem key={i} insight={insight} />
@@ -34,20 +34,20 @@ function InsightCardItem({ insight }: { insight: InsightItem }) {
       style={{
         width: '100%',
         textAlign: 'left' as const,
-        background: '#f9fafb',
-        border: '1px solid #f3f4f6',
+        background: 'rgba(0, 0, 0, 0.06)',
+        border: '1px solid rgba(0, 0, 0, 0.06)',
         borderRadius: '8px',
         padding: '12px',
         cursor: 'pointer'
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: 500, color: '#1f2937', margin: 0 }}>{insight.title}</h3>
-        <span style={{ color: '#9ca3af', fontSize: '12px', marginLeft: '8px' }}>{expanded ? '▲' : '▼'}</span>
+        <h3 style={{ fontSize: '16px', fontWeight: 500, color: '#1f2937', margin: 0 }}>{insight.title}</h3>
+        <span style={{ color: '#9ca3af', fontSize: '13px', marginLeft: '8px' }}>{expanded ? '▲' : '▼'}</span>
       </div>
       {expanded && (
         <div style={{ marginTop: '8px' }}>
-          <p style={{ fontSize: '12px', color: '#4b5563', lineHeight: 1.6, margin: 0 }}>{insight.body}</p>
+          <p style={{ fontSize: '15px', color: '#4b5563', lineHeight: 1.6, margin: 0 }}>{insight.body}</p>
           {insight.relatedUrls.length > 0 && (
             <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap' as const, gap: '4px' }}>
               {insight.relatedUrls.map((url, i) => (
