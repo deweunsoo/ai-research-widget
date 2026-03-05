@@ -1,5 +1,5 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-import { app, BrowserWindow, ipcMain, Notification, screen, clipboard } from 'electron'
+import { app, BrowserWindow, ipcMain, Notification, screen, clipboard, net } from 'electron'
 import { execFile } from 'child_process'
 import path from 'path'
 import os from 'os'
@@ -131,17 +131,17 @@ function setupIPC(): void {
         break
     }
   })
-  ipcMain.handle('share-text', (_e, text: string) => {
-    clipboard.writeText(text)
-    const script = `
-      use framework "AppKit"
-      set shareItems to current application's NSArray's arrayWithObject:"${text.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"
-      set picker to current application's NSSharingServicePicker's alloc()'s initWithItems:shareItems
-      picker's showRelativeToRect:{0,0,1,1} ofView:(current application's NSApp's mainWindow()'s contentView()) preferredEdge:0
-    `
-    execFile('osascript', ['-l', 'AppleScript', '-e', script], (err) => {
-      if (err) console.error('[Share] Error:', err)
-    })
+  ipcMain.handle('share-text', async (_e, text: string) => {
+    try {
+      const res = await net.fetch('https://dpaste.org/api/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `content=${encodeURIComponent(text)}&syntax=markdown&expiry_days=7`
+      })
+      return (await res.text()).trim()
+    } catch {
+      return null
+    }
   })
   ipcMain.handle('window-close', () => mainWindow?.hide())
   ipcMain.handle('window-minimize', () => mainWindow?.minimize())

@@ -1,0 +1,40 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630">
+      <stop offset="0%" stop-color="#F8FAFB"/>
+      <stop offset="100%" stop-color="#EFF3F6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Cat icon -->
+  <g transform="translate(520, 140) scale(2.8)">
+    <ellipse cx="15.8" cy="17" rx="14.5" ry="13.5" fill="#FDB731"/>
+    <path d="M9 1.1L3.8 9.5L13.3 4L10.6 1C10.2 0.5 9.4 0.6 9 1.1Z" fill="#FDB731"/>
+    <path d="M22.2 1.1L27.5 9L18 3.8L20.6 0.9C21.1 0.5 21.8 0.5 22.2 1.1Z" fill="#FDB731"/>
+    <circle cx="11.4" cy="14.3" r="1.8" fill="#000006"/>
+    <circle cx="19.1" cy="14.3" r="1.8" fill="#000006"/>
+    <path d="M16.3 18.7C16 19 15.6 19 15.4 18.7L14.3 17.6C14 17.2 14.2 16.6 14.8 16.6H16.9C17.4 16.6 17.7 17.2 17.3 17.6L16.3 18.7Z" fill="#FE5B00"/>
+    <path d="M3.8 17.2L0.5 16.6M3.8 20.3L0.5 21.1" stroke="#000006" stroke-linecap="round"/>
+    <path d="M27.8 17.2L31 16.6M27.8 20.3L31 21.1" stroke="#000006" stroke-linecap="round"/>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="340" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" font-size="56" font-weight="600" fill="#191F28" letter-spacing="-1">PRINGSEARCH</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="400" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" font-size="24" fill="#6B7684" letter-spacing="-0.3">AI/UX 리서치를 매일 자동으로</text>
+
+  <!-- Tags -->
+  <rect x="380" y="440" rx="20" ry="20" width="100" height="36" fill="#E8F3FF"/>
+  <text x="430" y="464" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="15" font-weight="500" fill="#3182F6">macOS</text>
+
+  <rect x="500" y="440" rx="20" ry="20" width="90" height="36" fill="#E5F8ED"/>
+  <text x="545" y="464" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="15" font-weight="500" fill="#19B06B">RSS</text>
+
+  <rect x="610" y="440" rx="20" ry="20" width="90" height="36" fill="#FFF3E0"/>
+  <text x="655" y="464" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="15" font-weight="500" fill="#F59E0B">HN</text>
+
+  <rect x="720" y="440" rx="20" ry="20" width="100" height="36" fill="#F3E8FF"/>
+  <text x="770" y="464" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="15" font-weight="500" fill="#8B5CF6">Claude</text>
+</svg>

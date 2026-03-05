@@ -32,6 +32,7 @@ export default function App() {
   const { research, loading, currentDate, loadResearch, runNow, clear } = useResearch()
   const [showSettings, setShowSettings] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [shared, setShared] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
   const settingsRef = useRef<HTMLDivElement>(null)
@@ -184,9 +185,9 @@ export default function App() {
               </button>
               <button
                 onClick={() => {
-                  const text = toMarkdown(research)
-                  navigator.clipboard.writeText(text)
-                  window.api.shareText?.(text)
+                  navigator.clipboard.writeText('https://deweunsoo.github.io/pringsearch/')
+                  setShared(true)
+                  setTimeout(() => setShared(false), 2000)
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#F2F4F6')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
@@ -204,7 +205,7 @@ export default function App() {
                   boxShadow: '0 3px 16px rgba(0, 0, 0, 0.1)'
                 }}
               >
-                공유하기
+                {shared ? 'URL 복사됨!' : '공유하기'}
               </button>
             </div>
           )}
