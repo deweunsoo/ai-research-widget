@@ -9,6 +9,9 @@ declare global {
       getConfig: () => Promise<any>
       saveConfig: (config: any) => Promise<void>
       runResearchNow: () => Promise<void>
+      getBookmarks: () => Promise<any[]>
+      saveBookmark: (item: any) => Promise<void>
+      removeBookmark: (id: string) => Promise<void>
       onResearchComplete: (callback: (result: any) => void) => () => void
     }
   }
@@ -56,5 +59,10 @@ export function useResearch() {
     return cleanup
   }, [])
 
-  return { research, loading, currentDate, loadResearch, runNow }
+  const clear = useCallback(() => {
+    setResearch(null)
+    setLoading(false)
+  }, [])
+
+  return { research, loading, currentDate, loadResearch, runNow, clear }
 }

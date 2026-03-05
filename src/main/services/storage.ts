@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import type { AppConfig, ResearchResult } from '../../shared/types'
+import type { AppConfig, ResearchResult, BookmarkItem } from '../../shared/types'
 import { DEFAULT_CONFIG } from '../../shared/types'
 
 export class StorageService {
@@ -49,6 +49,31 @@ export class StorageService {
 
   saveResearch(result: ResearchResult): void {
     fs.writeFileSync(this.researchPath(result.date), JSON.stringify(result, null, 2), 'utf-8')
+  }
+
+  private get bookmarksPath(): string {
+    return path.join(this.basePath, 'bookmarks.json')
+  }
+
+  loadBookmarks(): BookmarkItem[] {
+    try {
+      return JSON.parse(fs.readFileSync(this.bookmarksPath, 'utf-8'))
+    } catch {
+      return []
+    }
+  }
+
+  saveBookmark(item: BookmarkItem): void {
+    const bookmarks = this.loadBookmarks()
+    if (!bookmarks.find(b => b.id === item.id)) {
+      bookmarks.unshift(item)
+      fs.writeFileSync(this.bookmarksPath, JSON.stringify(bookmarks, null, 2), 'utf-8')
+    }
+  }
+
+  removeBookmark(id: string): void {
+    const bookmarks = this.loadBookmarks().filter(b => b.id !== id)
+    fs.writeFileSync(this.bookmarksPath, JSON.stringify(bookmarks, null, 2), 'utf-8')
   }
 
   listResearchDates(): string[] {

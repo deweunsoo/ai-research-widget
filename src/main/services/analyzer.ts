@@ -2,6 +2,9 @@ import { spawn } from 'child_process'
 import type { RawArticle, TrendItem, InsightItem, ActionItem } from '../../shared/types'
 
 interface AnalysisResult {
+  trendHeadline: string
+  insightHeadline: string
+  actionHeadline: string
   trends: TrendItem[]
   insights: InsightItem[]
   actions: ActionItem[]
@@ -10,7 +13,7 @@ interface AnalysisResult {
 export class ClaudeAnalyzer {
   async analyze(articles: RawArticle[], keywords: string[]): Promise<AnalysisResult> {
     if (articles.length === 0) {
-      return { trends: [], insights: [], actions: [] }
+      return { trendHeadline: '', insightHeadline: '', actionHeadline: '', trends: [], insights: [], actions: [] }
     }
 
     const articleSummaries = articles
@@ -26,8 +29,11 @@ ${articleSummaries}
 
 다음 JSON 형식으로 정확히 응답하세요 (JSON만, 다른 텍스트 없이):
 {
+  "trendHeadline": "핵심 트렌드 섹션의 요약 제목 (한국어, 한 문장)",
+  "insightHeadline": "인사이트 섹션의 요약 제목 (한국어, 한 문장)",
+  "actionHeadline": "실무 적용 섹션의 요약 제목 (한국어, 한 문장)",
   "trends": [
-    { "text": "핵심 트렌드 한 줄 요약 (한국어)", "relatedUrls": ["관련 기사 URL"] }
+    { "keywords": ["키워드1", "키워드2"], "text": "핵심 트렌드 한 줄 요약 (한국어)", "relatedUrls": ["관련 기사 URL"] }
   ],
   "insights": [
     { "title": "인사이트 제목 (한국어)", "body": "2-3문장의 상세 인사이트 (한국어)", "relatedUrls": ["관련 기사 URL"] }
@@ -38,20 +44,23 @@ ${articleSummaries}
 }
 
 규칙:
+- trendHeadline, insightHeadline, actionHeadline은 각 섹션의 내용을 하나의 구체적인 문장으로 요약
 - trends는 최대 5개
 - insights는 최대 5개
 - actions는 최대 5개
 - 모든 텍스트는 한국어로
-- category는 "study", "apply", "explore" 중 하나`
+- category는 "study", "apply", "explore" 중 하나
+- 중요한 숫자, 고유명사, 핵심 키워드는 **볼드**로 감싸기 (예: "**Cursor** 연매출 **20억 달러** 돌파")
+- trends의 keywords는 해당 트렌드의 핵심 키워드 1-3개 (예: ["AI 코딩", "Cursor", "바이브 코딩"])`
 
     const text = await this.runClaude(prompt)
 
     try {
       const jsonMatch = text.match(/\{[\s\S]*\}/)
-      if (!jsonMatch) return { trends: [], insights: [], actions: [] }
+      if (!jsonMatch) return { trendHeadline: '', insightHeadline: '', actionHeadline: '', trends: [], insights: [], actions: [] }
       return JSON.parse(jsonMatch[0])
     } catch {
-      return { trends: [], insights: [], actions: [] }
+      return { trendHeadline: '', insightHeadline: '', actionHeadline: '', trends: [], insights: [], actions: [] }
     }
   }
 

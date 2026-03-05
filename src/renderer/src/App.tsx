@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Header from './components/Header'
 import TrendSummary from './components/TrendSummary'
 import InsightCards from './components/InsightCard'
@@ -8,9 +8,65 @@ import Settings from './components/Settings'
 import { useResearch } from './hooks/useResearch'
 import { CatIcon, CaterpillarIcon, DocListIcon } from './components/icons'
 
+function toMarkdown(research: any): string {
+  let md = `# 리서치 결과 (${research.date})\n\n`
+  if (research.trends?.length) {
+    md += `## 핵심 트렌드\n`
+    research.trends.forEach((t: any) => { md += `- ${t.text}\n` })
+    md += '\n'
+  }
+  if (research.insights?.length) {
+    md += `## 인사이트\n`
+    research.insights.forEach((ins: any) => {
+      md += `### ${ins.title}\n${ins.body}\n\n`
+    })
+  }
+  if (research.actions?.length) {
+    md += `## 실무 적용 제안\n`
+    research.actions.forEach((a: any) => { md += `- [${a.category}] ${a.text}\n` })
+  }
+  return md
+}
+
 export default function App() {
-  const { research, loading, currentDate, loadResearch, runNow } = useResearch()
+  const { research, loading, currentDate, loadResearch, runNow, clear } = useResearch()
   const [showSettings, setShowSettings] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  const syncHeight = useCallback(() => {
+    if (!loading && research && contentRef.current) {
+      const contentH = contentRef.current.scrollHeight
+      window.api.resizeWindow(contentH + 140)
+    } else {
+      window.api.resizeWindow(520)
+    }
+  }, [research, loading])
+
+  useEffect(() => {
+    requestAnimationFrame(syncHeight)
+  }, [research, loading, showSettings, syncHeight])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!e.metaKey) return
+      const map: Record<string, string> = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }
+      const dir = map[e.key]
+      if (dir) {
+        e.preventDefault()
+        window.api.snapWindow(dir)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  const handleCopy = () => {
+    if (!research) return
+    navigator.clipboard.writeText(toMarkdown(research))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div
@@ -22,7 +78,9 @@ export default function App() {
         flexDirection: 'column',
         overflow: 'hidden',
         boxSizing: 'border-box',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif',
+        letterSpacing: '-0.3px',
+        WebkitFontSmoothing: 'antialiased'
       }}
     >
       {showSettings ? (
@@ -35,13 +93,13 @@ export default function App() {
             currentDate={currentDate}
             generatedAt={research?.generatedAt}
             onSettingsClick={() => setShowSettings(true)}
-            onRefresh={runNow}
+            onClear={clear}
             loading={loading}
           />
 
-          <div className="scrollable" style={{ flex: 1, overflowY: 'auto', marginRight: '-20px', paddingRight: '20px' }}>
+          <div ref={contentRef} className="scrollable" style={{ flex: 1, overflowY: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             {loading && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '4px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '4px' }}>
                 <div style={{ position: 'relative', marginBottom: '24px' }}>
                   <div style={{ opacity: 0.35 }}>
                     <DocListIcon size={80} />
@@ -56,7 +114,7 @@ export default function App() {
             )}
 
             {!loading && !research && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '12px' }}>
                 <div className="cat-bounce"><CatIcon size={70} /></div>
                 <p style={{ fontSize: '18px', color: '#4b5563', textAlign: 'center', lineHeight: 1.6, marginTop: '8px' }}>
                   아직 리서치 시간이 아닙니다.<br />
@@ -82,10 +140,28 @@ export default function App() {
             )}
 
             {!loading && research && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <TrendSummary trends={research.trends || []} />
-                <InsightCards insights={research.insights || []} />
-                <ActionItems actions={research.actions || []} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={handleCopy}
+                    style={{
+                      background: '#3182F6',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px 18px',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      color: '#FFFFFF',
+                      cursor: 'pointer',
+                      letterSpacing: '-0.2px'
+                    }}
+                  >
+                    {copied ? '복사됨!' : '마크다운 복사'}
+                  </button>
+                </div>
+                <TrendSummary trends={research.trends || []} headline={research.trendHeadline} />
+                <InsightCards insights={research.insights || []} headline={research.insightHeadline} />
+                <ActionItems actions={research.actions || []} headline={research.actionHeadline} />
               </div>
             )}
           </div>

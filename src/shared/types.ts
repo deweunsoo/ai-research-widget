@@ -8,6 +8,7 @@ export interface RawArticle {
 }
 
 export interface TrendItem {
+  keywords: string[]
   text: string
   relatedUrls: string[]
 }
@@ -26,10 +27,21 @@ export interface ActionItem {
 export interface ResearchResult {
   date: string
   generatedAt: string
+  trendHeadline: string
+  insightHeadline: string
+  actionHeadline: string
   rawArticles: RawArticle[]
   trends: TrendItem[]
   insights: InsightItem[]
   actions: ActionItem[]
+}
+
+export interface BookmarkItem {
+  id: string
+  type: 'trend' | 'insight' | 'action'
+  content: TrendItem | InsightItem | ActionItem
+  date: string
+  savedAt: string
 }
 
 export interface RssSource {

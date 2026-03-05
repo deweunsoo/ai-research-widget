@@ -77,7 +77,7 @@ export default function Settings({ onBack, onRunNow }: Props) {
       <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>설정</h2>
     </div>
 
-    <div className="scrollable" style={{ overflowY: 'auto', flex: 1, minHeight: 0, paddingRight: '0px' }}>
+    <div className="scrollable" style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
 
       {/* 리서치 시간 */}
       <div style={section}>
@@ -117,7 +117,7 @@ export default function Settings({ onBack, onRunNow }: Props) {
         <span style={label}>RSS 소스</span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {config.rssSources.map((source, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 10px', background: 'rgba(255,255,255,0.35)', borderRadius: '8px' }}>
+            <div key={i} className="rss-item" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 10px' }}>
               <input
                 type="checkbox"
                 checked={source.enabled}
@@ -130,6 +130,7 @@ export default function Settings({ onBack, onRunNow }: Props) {
               />
               <span style={{ fontSize: '15px', color: 'rgba(0,0,0,0.7)', flex: 1 }}>{source.name}</span>
               <button
+                className="rss-delete"
                 onClick={() => save({ rssSources: config.rssSources.filter((_, j) => j !== i) })}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', color: 'rgba(220,60,60,0.7)', padding: 0 }}
               >

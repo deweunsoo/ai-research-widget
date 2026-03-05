@@ -4,7 +4,7 @@ interface HeaderProps {
   currentDate: string
   generatedAt?: string
   onSettingsClick: () => void
-  onRefresh: () => void
+  onClear: () => void
   loading: boolean
 }
 
@@ -14,10 +14,10 @@ const SettingsIcon = () => (
   </svg>
 )
 
-export default function Header({ onSettingsClick, onRefresh, loading }: HeaderProps) {
+export default function Header({ onSettingsClick, onClear, loading }: HeaderProps) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         <div className="traffic-lights">
           <button
             className="traffic-btn"
@@ -25,8 +25,8 @@ export default function Header({ onSettingsClick, onRefresh, loading }: HeaderPr
             style={{ background: '#FF5F57' }}
             aria-label="Close"
           >
-            <svg viewBox="0 0 12 12" fill="none" stroke="#4D0000" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M3 3l6 6M9 3l-6 6"/>
+            <svg viewBox="0 0 12 12" fill="none" stroke="#4D0000" strokeWidth="1.8" strokeLinecap="round">
+              <path d="M3.5 3.5l5 5M8.5 3.5l-5 5"/>
             </svg>
           </button>
           <button
@@ -35,8 +35,8 @@ export default function Header({ onSettingsClick, onRefresh, loading }: HeaderPr
             style={{ background: '#FEBC2E' }}
             aria-label="Minimize"
           >
-            <svg viewBox="0 0 12 12" fill="none" stroke="#995700" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M2 6h8"/>
+            <svg viewBox="0 0 12 12" fill="none" stroke="#995700" strokeWidth="1.8" strokeLinecap="round">
+              <path d="M2.5 6h7"/>
             </svg>
           </button>
           <button
@@ -45,8 +45,8 @@ export default function Header({ onSettingsClick, onRefresh, loading }: HeaderPr
             style={{ background: '#28C840' }}
             aria-label="Maximize"
           >
-            <svg viewBox="0 0 12 12" fill="none" stroke="#006500" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M2 2l8 8M10 2l-8 8"/>
+            <svg viewBox="0 0 12 12" fill="none" stroke="#006500" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2.5 2.5L9.5 9.5"/><polyline points="5.5,9.5 9.5,9.5 9.5,5.5"/><polyline points="6.5,2.5 2.5,2.5 2.5,6.5"/>
             </svg>
           </button>
         </div>
@@ -55,7 +55,7 @@ export default function Header({ onSettingsClick, onRefresh, loading }: HeaderPr
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           className="header-icon-btn"
-          onClick={onRefresh}
+          onClick={onClear}
           disabled={loading}
           style={{ opacity: loading ? 0.5 : 1 }}
           data-tooltip="Clear"

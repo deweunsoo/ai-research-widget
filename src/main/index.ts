@@ -17,19 +17,18 @@ let mainWindow: BrowserWindow | null = null
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 460,
-    height: 640,
+    height: 400,
     frame: false,
     transparent: true,
     hasShadow: true,
     vibrancy: 'fullscreen-ui',
     visualEffectState: 'active',
     backgroundColor: '#00000000',
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     resizable: true,
     minWidth: 360,
-    minHeight: 480,
+    minHeight: 200,
     maxWidth: 600,
-    maxHeight: 900,
     skipTaskbar: true,
     show: false,
     webPreferences: {
@@ -41,7 +40,7 @@ function createWindow(): void {
 
   const display = screen.getPrimaryDisplay()
   const { width, height } = display.workAreaSize
-  mainWindow.setPosition(width - 480, height - 660)
+  mainWindow.setPosition(width - 480, height - 420)
 
   mainWindow.on('ready-to-show', () => mainWindow?.show())
 
@@ -96,6 +95,41 @@ function setupIPC(): void {
     scheduler.reschedule(config.scheduleHour, config.scheduleMinute, runResearch)
   })
   ipcMain.handle('run-research-now', () => runResearch())
+  ipcMain.handle('get-bookmarks', () => storage.loadBookmarks())
+  ipcMain.handle('save-bookmark', (_e, item) => storage.saveBookmark(item))
+  ipcMain.handle('remove-bookmark', (_e, id: string) => storage.removeBookmark(id))
+  ipcMain.handle('resize-window', (_e, height: number) => {
+    if (!mainWindow) return
+    const display = screen.getPrimaryDisplay()
+    const maxH = display.workAreaSize.height - 40
+    const [w, oldH] = mainWindow.getSize()
+    const newH = Math.min(Math.max(height, 200), maxH)
+    if (newH === oldH) return
+    const [x, y] = mainWindow.getPosition()
+    const newY = y - (newH - oldH)
+    mainWindow.setBounds({ x, y: Math.max(newY, 20), width: w, height: newH }, true)
+  })
+  ipcMain.handle('snap-window', (_e, direction: string) => {
+    if (!mainWindow) return
+    const { bounds, workArea } = screen.getPrimaryDisplay()
+    const [w, h] = mainWindow.getSize()
+    switch (direction) {
+      case 'left':
+        mainWindow.setPosition(bounds.x, workArea.y)
+        break
+      case 'right':
+        mainWindow.setPosition(bounds.x + bounds.width - w, workArea.y)
+        break
+      case 'up':
+        mainWindow.setPosition(bounds.x + bounds.width - w, workArea.y)
+        mainWindow.setSize(w, workArea.height)
+        break
+      case 'down':
+        mainWindow.setPosition(bounds.x + bounds.width - w, workArea.y + workArea.height - 400)
+        mainWindow.setSize(w, 400)
+        break
+    }
+  })
   ipcMain.handle('window-close', () => mainWindow?.hide())
   ipcMain.handle('window-minimize', () => mainWindow?.minimize())
   ipcMain.handle('window-maximize', () => {

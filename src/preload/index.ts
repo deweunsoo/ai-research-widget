@@ -7,6 +7,14 @@ contextBridge.exposeInMainWorld('api', {
   getConfig: () => ipcRenderer.invoke('get-config'),
   saveConfig: (config: any) => ipcRenderer.invoke('save-config', config),
   runResearchNow: () => ipcRenderer.invoke('run-research-now'),
+  getBookmarks: () => ipcRenderer.invoke('get-bookmarks'),
+  saveBookmark: (item: any) => ipcRenderer.invoke('save-bookmark', item),
+  removeBookmark: (id: string) => ipcRenderer.invoke('remove-bookmark', id),
+  resizeWindow: (height: number) => ipcRenderer.invoke('resize-window', height),
+  snapWindow: (direction: string) => ipcRenderer.invoke('snap-window', direction),
+  windowClose: () => ipcRenderer.invoke('window-close'),
+  windowMinimize: () => ipcRenderer.invoke('window-minimize'),
+  windowMaximize: () => ipcRenderer.invoke('window-maximize'),
   onResearchComplete: (callback: (result: any) => void) => {
     const handler = (_event: any, result: any) => callback(result)
     ipcRenderer.on('research-complete', handler)
