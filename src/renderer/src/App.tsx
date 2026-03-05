@@ -32,16 +32,21 @@ export default function App() {
   const { research, loading, currentDate, loadResearch, runNow, clear } = useResearch()
   const [showSettings, setShowSettings] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
+  const settingsRef = useRef<HTMLDivElement>(null)
 
   const syncHeight = useCallback(() => {
-    if (!loading && research && contentRef.current) {
+    if (showSettings && settingsRef.current) {
+      const h = settingsRef.current.scrollHeight
+      window.api.resizeWindow(h + 40)
+    } else if (!loading && research && contentRef.current) {
       const contentH = contentRef.current.scrollHeight
       window.api.resizeWindow(contentH + 140)
     } else {
       window.api.resizeWindow(520)
     }
-  }, [research, loading])
+  }, [research, loading, showSettings])
 
   useEffect(() => {
     requestAnimationFrame(syncHeight)
@@ -84,7 +89,7 @@ export default function App() {
       }}
     >
       {showSettings ? (
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <div ref={settingsRef} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           <Settings onBack={() => setShowSettings(false)} onRunNow={runNow} />
         </div>
       ) : (
@@ -95,9 +100,10 @@ export default function App() {
             onSettingsClick={() => setShowSettings(true)}
             onClear={clear}
             loading={loading}
+            scrolled={scrolled}
           />
 
-          <div ref={contentRef} className="scrollable" style={{ flex: 1, overflowY: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <div ref={contentRef} className="scrollable" onScroll={e => setScrolled((e.target as HTMLDivElement).scrollTop > 0)} style={{ flex: 1, overflowY: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             {loading && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '4px' }}>
                 <div style={{ position: 'relative', marginBottom: '24px' }}>
@@ -140,30 +146,68 @@ export default function App() {
             )}
 
             {!loading && research && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <button
-                    onClick={handleCopy}
-                    style={{
-                      background: '#3182F6',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px 18px',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      color: '#FFFFFF',
-                      cursor: 'pointer',
-                      letterSpacing: '-0.2px'
-                    }}
-                  >
-                    {copied ? '복사됨!' : '마크다운 복사'}
-                  </button>
-                </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', paddingBottom: '70px' }}>
                 <TrendSummary trends={research.trends || []} headline={research.trendHeadline} />
                 <InsightCards insights={research.insights || []} headline={research.insightHeadline} />
                 <ActionItems actions={research.actions || []} headline={research.actionHeadline} />
               </div>
             )}
+
+            {!loading && research && (
+            <div style={{
+              position: 'sticky',
+              bottom: 0,
+              display: 'flex',
+              gap: '8px',
+              justifyContent: 'center',
+              padding: '14px 0 14px'
+            }}>
+              <button
+                onClick={handleCopy}
+                onMouseEnter={e => (e.currentTarget.style.background = '#1B64DA')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#3182F6')}
+                style={{
+                  background: '#3182F6',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#FFFFFF',
+                  cursor: 'pointer',
+                  letterSpacing: '-0.2px',
+                  transition: 'background 0.15s',
+                  boxShadow: '0 3px 16px rgba(49, 130, 246, 0.3)'
+                }}
+              >
+                {copied ? '복사됨!' : '마크다운 복사'}
+              </button>
+              <button
+                onClick={() => {
+                  const text = toMarkdown(research)
+                  navigator.clipboard.writeText(text)
+                  window.api.shareText?.(text)
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#F2F4F6')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '10px',
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#4E5968',
+                  cursor: 'pointer',
+                  letterSpacing: '-0.2px',
+                  transition: 'background 0.15s',
+                  boxShadow: '0 3px 16px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                공유하기
+              </button>
+            </div>
+          )}
           </div>
 
           <DateNav currentDate={currentDate} onDateChange={loadResearch} />

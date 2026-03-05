@@ -15,6 +15,7 @@ contextBridge.exposeInMainWorld('api', {
   windowClose: () => ipcRenderer.invoke('window-close'),
   windowMinimize: () => ipcRenderer.invoke('window-minimize'),
   windowMaximize: () => ipcRenderer.invoke('window-maximize'),
+  shareText: (text: string) => ipcRenderer.invoke('share-text', text),
   onResearchComplete: (callback: (result: any) => void) => {
     const handler = (_event: any, result: any) => callback(result)
     ipcRenderer.on('research-complete', handler)

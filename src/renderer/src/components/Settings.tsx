@@ -21,30 +21,6 @@ interface Props {
   onRunNow: () => void
 }
 
-const label: React.CSSProperties = {
-  fontSize: '14px',
-  fontWeight: 500,
-  color: 'rgba(0,0,0,0.5)',
-  display: 'block',
-  marginBottom: '6px'
-}
-
-const input: React.CSSProperties = {
-  background: 'rgba(0,0,0,0.06)',
-  border: '1px solid rgba(0,0,0,0.08)',
-  borderRadius: '10px',
-  padding: '8px 12px',
-  fontSize: '15px',
-  color: 'rgba(0,0,0,0.8)',
-  outline: 'none',
-  width: '100%',
-  boxSizing: 'border-box'
-}
-
-const section: React.CSSProperties = {
-  marginBottom: '20px'
-}
-
 export default function Settings({ onBack, onRunNow }: Props) {
   const [config, setConfig] = useState<AppConfig | null>(null)
   const [newKeyword, setNewKeyword] = useState('')
@@ -62,202 +38,432 @@ export default function Settings({ onBack, onRunNow }: Props) {
     await window.api.saveConfig(newConfig)
   }
 
-  if (!config) return <div style={{ fontSize: '15px', color: 'rgba(0,0,0,0.4)' }}>로딩 중...</div>
+  if (!config) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, fontSize: '15px', color: '#8B95A1' }}>
+      로딩 중...
+    </div>
+  )
 
   return (
     <>
-    {/* Header - 상단 고정 */}
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexShrink: 0 }}>
-      <button
-        onClick={onBack}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: 'rgba(0,0,0,0.5)', padding: 0 }}
-      >
-        &larr;
-      </button>
-      <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>설정</h2>
-    </div>
-
-    <div className="scrollable" style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
-
-      {/* 리서치 시간 */}
-      <div style={section}>
-        <span style={label}>리서치 시간</span>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <input
-            type="number" min={0} max={23}
-            value={config.scheduleHour}
-            onChange={e => save({ scheduleHour: Number(e.target.value) })}
-            style={{ ...input, width: '64px', textAlign: 'center' }}
-          />
-          <span style={{ fontSize: '15px', color: 'rgba(0,0,0,0.5)' }}>시</span>
-          <input
-            type="number" min={0} max={59}
-            value={config.scheduleMinute}
-            onChange={e => save({ scheduleMinute: Number(e.target.value) })}
-            style={{ ...input, width: '64px', textAlign: 'center' }}
-          />
-          <span style={{ fontSize: '15px', color: 'rgba(0,0,0,0.5)' }}>분</span>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: '2.5px',
+        marginBottom: '12px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div className="traffic-lights">
+            <button
+              className="traffic-btn"
+              onClick={() => (window as any).api.windowClose()}
+              style={{ background: '#FF5F57' }}
+              aria-label="Close"
+            >
+              <svg viewBox="0 0 12 12" fill="none" stroke="#4D0000" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M3.5 3.5l5 5M8.5 3.5l-5 5"/>
+              </svg>
+            </button>
+            <button
+              className="traffic-btn"
+              onClick={() => (window as any).api.windowMinimize()}
+              style={{ background: '#FEBC2E' }}
+              aria-label="Minimize"
+            >
+              <svg viewBox="0 0 12 12" fill="none" stroke="#995700" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M2.5 6h7"/>
+              </svg>
+            </button>
+            <button
+              className="traffic-btn"
+              onClick={() => (window as any).api.windowMaximize()}
+              style={{ background: '#28C840' }}
+              aria-label="Maximize"
+            >
+              <svg viewBox="0 0 12 12" fill="none" stroke="#006500" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 2.5L9.5 9.5"/><polyline points="5.5,9.5 9.5,9.5 9.5,5.5"/><polyline points="6.5,2.5 2.5,2.5 2.5,6.5"/>
+              </svg>
+            </button>
+          </div>
+          <h2 style={{ fontSize: '15px', fontWeight: 500, color: '#6b7280', letterSpacing: '0.5px', margin: 0 }}>설정</h2>
         </div>
-      </div>
-
-      {/* Claude API Key */}
-      <div style={section}>
-        <span style={label}>Claude API Key</span>
-        <input
-          type="password"
-          value={config.anthropicApiKey}
-          onChange={e => save({ anthropicApiKey: e.target.value })}
-          placeholder="API Key 입력"
-          style={input}
-        />
-      </div>
-
-      {/* RSS 소스 */}
-      <div style={section}>
-        <span style={label}>RSS 소스</span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {config.rssSources.map((source, i) => (
-            <div key={i} className="rss-item" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 10px' }}>
-              <input
-                type="checkbox"
-                checked={source.enabled}
-                onChange={e => {
-                  const updated = [...config.rssSources]
-                  updated[i] = { ...source, enabled: e.target.checked }
-                  save({ rssSources: updated })
-                }}
-                style={{ accentColor: '#3b82f6', width: '16px', height: '16px' }}
-              />
-              <span style={{ fontSize: '15px', color: 'rgba(0,0,0,0.7)', flex: 1 }}>{source.name}</span>
-              <button
-                className="rss-delete"
-                onClick={() => save({ rssSources: config.rssSources.filter((_, j) => j !== i) })}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', color: 'rgba(220,60,60,0.7)', padding: 0 }}
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
-          <input
-            value={newRssName}
-            onChange={e => setNewRssName(e.target.value)}
-            placeholder="이름"
-            style={{ ...input, flex: 1 }}
-          />
-          <input
-            value={newRssUrl}
-            onChange={e => setNewRssUrl(e.target.value)}
-            placeholder="RSS URL"
-            style={{ ...input, flex: 2 }}
-          />
-          <button
-            onClick={() => {
-              if (newRssName && newRssUrl) {
-                save({ rssSources: [...config.rssSources, { name: newRssName, url: newRssUrl, enabled: true }] })
-                setNewRssName('')
-                setNewRssUrl('')
-              }
-            }}
-            style={{ background: 'rgba(59,130,246,0.15)', border: 'none', borderRadius: '10px', cursor: 'pointer', fontSize: '18px', color: '#3b82f6', padding: '6px 14px', flexShrink: 0 }}
-          >
-            +
-          </button>
-        </div>
-      </div>
-
-      {/* 관심 키워드 */}
-      <div style={section}>
-        <span style={label}>관심 키워드</span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
-          {config.keywords.map((kw, i) => (
-            <span key={i} style={{
-              background: 'rgba(255,255,255,0.5)',
-              borderRadius: '20px',
-              padding: '5px 12px',
-              fontSize: '14px',
-              color: 'rgba(0,0,0,0.65)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              border: '1px solid rgba(255,255,255,0.4)'
-            }}>
-              {kw}
-              <button
-                onClick={() => save({ keywords: config.keywords.filter((_, j) => j !== i) })}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: 'rgba(220,60,60,0.6)', padding: 0 }}
-              >
-                ✕
-              </button>
-            </span>
-          ))}
-        </div>
-        <input
-          value={newKeyword}
-          onChange={e => setNewKeyword(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && newKeyword) {
-              save({ keywords: [...config.keywords, newKeyword] })
-              setNewKeyword('')
-            }
-          }}
-          placeholder="키워드 추가 (Enter)"
-          style={input}
-        />
-      </div>
-
-      {/* macOS 알림 */}
-      <div style={{ ...section, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '15px', fontWeight: 500, color: 'rgba(0,0,0,0.5)' }}>macOS 알림</span>
         <button
-          onClick={() => save({ notificationEnabled: !config.notificationEnabled })}
+          onClick={onBack}
           style={{
-            width: '44px',
-            height: '24px',
-            borderRadius: '12px',
-            background: config.notificationEnabled ? '#3b82f6' : 'rgba(0,0,0,0.15)',
+            background: 'none',
             border: 'none',
             cursor: 'pointer',
-            position: 'relative',
-            transition: 'background 0.2s'
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            color: '#8B95A1',
+            fontSize: '14px',
+            fontWeight: 500
           }}
         >
-          <div style={{
-            width: '20px',
-            height: '20px',
-            background: '#fff',
-            borderRadius: '50%',
-            position: 'absolute',
-            top: '2px',
-            left: config.notificationEnabled ? '22px' : '2px',
-            transition: 'left 0.2s',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-          }} />
+          닫기
         </button>
       </div>
 
-    </div>
+      <div className="scrollable" style={{ overflowY: 'auto', flex: 1, minHeight: 0, paddingBottom: '12px' }}>
 
-    {/* 저장 - 하단 고정 */}
-    <button
-      onClick={onRunNow}
+        {/* 리서치 시간 */}
+        <SectionCard>
+          <SectionLabel>리서치 시간</SectionLabel>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <AmPmToggle
+              isAm={config.scheduleHour < 12}
+              onChange={isAm => {
+                const h12 = config.scheduleHour % 12 || 12
+                save({ scheduleHour: isAm ? (h12 === 12 ? 0 : h12) : (h12 === 12 ? 12 : h12 + 12) })
+              }}
+            />
+            <TimeInput
+              value={config.scheduleHour % 12 || 12}
+              max={12}
+              min={1}
+              onChange={v => {
+                const isAm = config.scheduleHour < 12
+                save({ scheduleHour: isAm ? (v === 12 ? 0 : v) : (v === 12 ? 12 : v + 12) })
+              }}
+            />
+            <span style={{ fontSize: '14px', color: '#6B7684', fontWeight: 500 }}>시</span>
+            <TimeInput
+              value={config.scheduleMinute}
+              max={59}
+              min={0}
+              onChange={v => save({ scheduleMinute: v })}
+            />
+            <span style={{ fontSize: '14px', color: '#6B7684', fontWeight: 500 }}>분</span>
+          </div>
+        </SectionCard>
+
+        {/* RSS 소스 */}
+        <SectionCard>
+          <SectionLabel>RSS 소스</SectionLabel>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {config.rssSources.map((source, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '10px 0',
+                  borderBottom: i < config.rssSources.length - 1 ? '1px solid #F2F4F6' : 'none'
+                }}
+              >
+                <CustomCheckbox
+                  checked={source.enabled}
+                  onChange={checked => {
+                    const updated = [...config.rssSources]
+                    updated[i] = { ...source, enabled: checked }
+                    save({ rssSources: updated })
+                  }}
+                />
+                <span style={{ fontSize: '15px', color: '#333D4B', flex: 1, letterSpacing: '-0.2px' }}>{source.name}</span>
+                <button
+                  onClick={() => save({ rssSources: config.rssSources.filter((_, j) => j !== i) })}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '4px',
+                    color: '#B0B8C1',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '6px', marginTop: '12px' }}>
+            <input
+              value={newRssName}
+              onChange={e => setNewRssName(e.target.value)}
+              placeholder="이름"
+              style={{ ...inputStyle, flex: 1 }}
+            />
+            <input
+              value={newRssUrl}
+              onChange={e => setNewRssUrl(e.target.value)}
+              placeholder="RSS URL"
+              style={{ ...inputStyle, flex: 2 }}
+            />
+            <button
+              onClick={() => {
+                if (newRssName && newRssUrl && config.rssSources.length < 10) {
+                  save({ rssSources: [...config.rssSources, { name: newRssName, url: newRssUrl, enabled: true }] })
+                  setNewRssName('')
+                  setNewRssUrl('')
+                }
+              }}
+              style={{
+                background: '#4E5968',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                color: '#fff',
+                padding: '0 14px',
+                flexShrink: 0,
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              +
+            </button>
+          </div>
+        </SectionCard>
+
+        {/* 관심 키워드 */}
+        <SectionCard>
+          <SectionLabel>관심 키워드</SectionLabel>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+            {config.keywords.map((kw, i) => (
+              <span key={i} style={{
+                background: '#F2F4F6',
+                borderRadius: '8px',
+                padding: '6px 10px 6px 12px',
+                fontSize: '14px',
+                color: '#4E5968',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                letterSpacing: '-0.2px'
+              }}>
+                {kw}
+                <button
+                  onClick={() => save({ keywords: config.keywords.filter((_, j) => j !== i) })}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#B0B8C1',
+                    padding: '0 0 0 2px',
+                    fontSize: '11px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M4 4L10 10M10 4L4 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </span>
+            ))}
+          </div>
+          <input
+            value={newKeyword}
+            onChange={e => setNewKeyword(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && newKeyword.trim() && config.keywords.length < 10) {
+                save({ keywords: [...config.keywords, newKeyword.trim()] })
+                setNewKeyword('')
+              }
+            }}
+            placeholder="키워드 추가 (Enter)"
+            style={inputStyle}
+          />
+        </SectionCard>
+
+        {/* macOS 알림 */}
+        <SectionCard>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '15px', fontWeight: 500, color: '#333D4B', letterSpacing: '-0.2px' }}>macOS 알림</span>
+            <ToggleSwitch
+              checked={config.notificationEnabled}
+              onChange={v => save({ notificationEnabled: v })}
+            />
+          </div>
+        </SectionCard>
+
+      </div>
+
+      {/* 하단 버튼 */}
+      <button
+        onClick={onRunNow}
+        style={{
+          width: '100%',
+          padding: '14px',
+          background: '#3182F6',
+          color: '#fff',
+          fontSize: '16px',
+          fontWeight: 600,
+          borderRadius: '12px',
+          border: 'none',
+          cursor: 'pointer',
+          flexShrink: 0,
+          letterSpacing: '-0.2px',
+          transition: 'background 0.15s',
+          marginTop: '8px'
+        }}
+        onMouseEnter={e => (e.currentTarget.style.background = '#1B64DA')}
+        onMouseLeave={e => (e.currentTarget.style.background = '#3182F6')}
+      >
+        저장
+      </button>
+    </>
+  )
+}
+
+/* ── Sub-components ── */
+
+function SectionCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      background: '#fff',
+      borderRadius: '14px',
+      padding: '16px',
+      marginBottom: '10px',
+      border: '1px solid #F2F4F6'
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      fontSize: '13px',
+      fontWeight: 600,
+      color: '#8B95A1',
+      marginBottom: '10px',
+      letterSpacing: '-0.1px'
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function AmPmToggle({ isAm, onChange }: { isAm: boolean; onChange: (isAm: boolean) => void }) {
+  const base: React.CSSProperties = {
+    padding: '8px 14px',
+    fontSize: '16px',
+    fontWeight: 600,
+    border: 'none',
+    cursor: 'pointer',
+    letterSpacing: '-0.2px',
+    transition: 'all 0.15s'
+  }
+  return (
+    <div style={{ display: 'flex', background: '#F2F4F6', borderRadius: '10px', overflow: 'hidden', flexShrink: 0 }}>
+      <button
+        onClick={() => onChange(true)}
+        style={{ ...base, background: isAm ? '#4E5968' : 'transparent', color: isAm ? '#fff' : '#8B95A1', borderRadius: '10px 0 0 10px' }}
+      >
+        오전
+      </button>
+      <button
+        onClick={() => onChange(false)}
+        style={{ ...base, background: !isAm ? '#4E5968' : 'transparent', color: !isAm ? '#fff' : '#8B95A1', borderRadius: '0 10px 10px 0' }}
+      >
+        오후
+      </button>
+    </div>
+  )
+}
+
+function TimeInput({ value, max, min = 0, onChange }: { value: number; max: number; min?: number; onChange: (v: number) => void }) {
+  return (
+    <input
+      type="number"
+      min={min}
+      max={max}
+      value={value}
+      onChange={e => onChange(Number(e.target.value))}
       style={{
-        width: '100%',
-        padding: '12px',
-        background: '#3b82f6',
-        color: '#fff',
-        fontSize: '16px',
+        ...inputStyle,
+        width: '56px',
+        textAlign: 'center',
         fontWeight: 600,
-        borderRadius: '12px',
+        fontSize: '16px',
+        padding: '8px 4px'
+      }}
+    />
+  )
+}
+
+function CustomCheckbox({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      onClick={() => onChange(!checked)}
+      style={{
+        width: '22px',
+        height: '22px',
+        borderRadius: '6px',
+        border: checked ? 'none' : '1.5px solid #D1D6DB',
+        background: checked ? '#3182F6' : '#fff',
+        cursor: 'pointer',
+        padding: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        transition: 'all 0.15s'
+      }}
+    >
+      {checked && (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M3.5 7L6 9.5L10.5 4.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )}
+    </button>
+  )
+}
+
+function ToggleSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      onClick={() => onChange(!checked)}
+      style={{
+        width: '48px',
+        height: '28px',
+        borderRadius: '14px',
+        background: checked ? '#3182F6' : '#D1D6DB',
         border: 'none',
         cursor: 'pointer',
-        marginTop: '12px',
+        position: 'relative',
+        transition: 'background 0.2s',
+        padding: 0,
         flexShrink: 0
       }}
     >
-      저장
+      <div style={{
+        width: '22px',
+        height: '22px',
+        background: '#fff',
+        borderRadius: '50%',
+        position: 'absolute',
+        top: '3px',
+        left: checked ? '23px' : '3px',
+        transition: 'left 0.2s',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.15)'
+      }} />
     </button>
-    </>
   )
+}
+
+const inputStyle: React.CSSProperties = {
+  background: '#F2F4F6',
+  border: '1px solid transparent',
+  borderRadius: '10px',
+  padding: '10px 14px',
+  fontSize: '15px',
+  color: '#333D4B',
+  outline: 'none',
+  width: '100%',
+  boxSizing: 'border-box',
+  letterSpacing: '-0.2px',
+  transition: 'border-color 0.15s'
 }

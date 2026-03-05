@@ -1,5 +1,6 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-import { app, BrowserWindow, ipcMain, Notification, screen } from 'electron'
+import { app, BrowserWindow, ipcMain, Notification, screen, clipboard } from 'electron'
+import { execFile } from 'child_process'
 import path from 'path'
 import os from 'os'
 import { StorageService } from './services/storage'
@@ -16,7 +17,7 @@ let mainWindow: BrowserWindow | null = null
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
-    width: 460,
+    width: 520,
     height: 400,
     frame: false,
     transparent: true,
@@ -129,6 +130,18 @@ function setupIPC(): void {
         mainWindow.setSize(w, 400)
         break
     }
+  })
+  ipcMain.handle('share-text', (_e, text: string) => {
+    clipboard.writeText(text)
+    const script = `
+      use framework "AppKit"
+      set shareItems to current application's NSArray's arrayWithObject:"${text.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"
+      set picker to current application's NSSharingServicePicker's alloc()'s initWithItems:shareItems
+      picker's showRelativeToRect:{0,0,1,1} ofView:(current application's NSApp's mainWindow()'s contentView()) preferredEdge:0
+    `
+    execFile('osascript', ['-l', 'AppleScript', '-e', script], (err) => {
+      if (err) console.error('[Share] Error:', err)
+    })
   })
   ipcMain.handle('window-close', () => mainWindow?.hide())
   ipcMain.handle('window-minimize', () => mainWindow?.minimize())

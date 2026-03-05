@@ -23,8 +23,8 @@ export default function InsightCards({ insights, headline }: Props) {
           fontSize: '24px',
           fontWeight: 700,
           color: '#191F28',
-          lineHeight: 1.45,
-          letterSpacing: '-0.5px',
+          lineHeight: 1.4,
+          letterSpacing: '0em',
           margin: '0 0 16px 0',
           wordBreak: 'keep-all'
         }}>{headline}</p>
@@ -52,14 +52,14 @@ function InsightCardItem({ insight }: { insight: InsightItem }) {
         onClick={() => setExpanded(!expanded)}
         style={{ width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{
-            fontSize: '20px',
+            fontSize: '19px',
             fontWeight: 600,
             color: '#4E5968',
             margin: 0,
-            lineHeight: 1.6,
-            letterSpacing: '-0.3px'
+            lineHeight: 1.5,
+            letterSpacing: '0em'
           }}><BoldText text={insight.title} color="#4E5968" /></h3>
           <span style={{ color: '#8B95A1', fontSize: '13px', marginLeft: '12px', flexShrink: 0 }}>{expanded ? '▲' : '▼'}</span>
         </div>
@@ -67,11 +67,11 @@ function InsightCardItem({ insight }: { insight: InsightItem }) {
       {expanded && (
         <div style={{ marginTop: '12px' }}>
           <p style={{
-            fontSize: '19px',
+            fontSize: '17px',
             color: '#4E5968',
-            lineHeight: 1.8,
+            lineHeight: 1.6,
             margin: 0,
-            letterSpacing: '-0.3px',
+            letterSpacing: '0em',
             wordBreak: 'keep-all'
           }}><BoldText text={insight.body} color="#333D4B" /></p>
           {insight.relatedUrls.length > 0 && (

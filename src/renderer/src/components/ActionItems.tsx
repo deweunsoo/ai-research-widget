@@ -11,9 +11,9 @@ interface Props {
 }
 
 const categoryStyle: Record<string, { bg: string; color: string }> = {
-  study: { bg: '#EBF5FF', color: '#3182F6' },
-  apply: { bg: '#E8FAF0', color: '#1B9C5A' },
-  explore: { bg: '#FFF3E0', color: '#D67200' }
+  study: { bg: '#D0E8FF', color: '#2563C9' },
+  apply: { bg: '#C8F0D8', color: '#15803D' },
+  explore: { bg: '#FFE4B8', color: '#B85C00' }
 }
 
 const categoryLabel: Record<string, string> = {
@@ -22,8 +22,12 @@ const categoryLabel: Record<string, string> = {
   explore: '탐색'
 }
 
+const categoryOrder: Record<string, number> = { study: 0, explore: 1, apply: 2 }
+
 export default function ActionItems({ actions, headline }: Props) {
   if (actions.length === 0) return null
+
+  const sorted = [...actions].sort((a, b) => (categoryOrder[a.category] ?? 9) - (categoryOrder[b.category] ?? 9))
 
   return (
     <div>
@@ -33,21 +37,21 @@ export default function ActionItems({ actions, headline }: Props) {
           fontSize: '24px',
           fontWeight: 700,
           color: '#191F28',
-          lineHeight: 1.45,
-          letterSpacing: '-0.5px',
+          lineHeight: 1.4,
+          letterSpacing: '0em',
           margin: '0 0 16px 0',
           wordBreak: 'keep-all'
         }}>{headline}</p>
       )}
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {actions.map((action, i) => {
+        {sorted.map((action, i) => {
           const cs = categoryStyle[action.category] || { bg: '#F2F4F6', color: '#4E5968' }
           return (
             <li key={i} style={{
-              fontSize: '20px',
+              fontSize: '17px',
               color: '#333D4B',
-              lineHeight: 1.75,
-              letterSpacing: '-0.3px',
+              lineHeight: 1.6,
+              letterSpacing: '0em',
               display: 'flex',
               gap: '10px',
               alignItems: 'flex-start',
