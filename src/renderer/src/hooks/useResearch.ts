@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 declare global {
   interface Window {
@@ -13,26 +13,42 @@ declare global {
       saveBookmark: (item: any) => Promise<void>
       removeBookmark: (id: string) => Promise<void>
       onResearchComplete: (callback: (result: any) => void) => () => void
+      saveMarkdown: (filePath: string, content: string) => Promise<void>
+      pickFolder: () => Promise<string | null>
     }
   }
 }
 
+function toLocalDateStr(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 export function useResearch() {
-  const [research, setResearch] = useState<any>(null)
+  const [sessions, setSessions] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentDate, setCurrentDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [currentDate, setCurrentDate] = useState(() => toLocalDateStr(new Date()))
   const loadingStartRef = { current: 0 }
+  const isAddingRef = useRef(false)
 
   const loadResearch = useCallback(async (date: string) => {
-    setLoading(true)
     const result = await window.api.getResearch(date)
-    setResearch(result)
+    setSessions(Array.isArray(result) ? result : result ? [result] : [])
     setCurrentDate(date)
-    setLoading(false)
   }, [])
 
   const runNow = useCallback(async () => {
-    setResearch(null)
+    isAddingRef.current = false
+    setSessions([])
+    setLoading(true)
+    loadingStartRef.current = Date.now()
+    await window.api.runResearchNow()
+  }, [])
+
+  const addResearch = useCallback(async () => {
+    isAddingRef.current = true
     setLoading(true)
     loadingStartRef.current = Date.now()
     await window.api.runResearchNow()
@@ -40,7 +56,7 @@ export function useResearch() {
 
   useEffect(() => {
     window.api.getTodayResearch().then(result => {
-      setResearch(result)
+      setSessions(Array.isArray(result) ? result : result ? [result] : [])
       setLoading(false)
     })
 
@@ -49,9 +65,14 @@ export function useResearch() {
       const minDelay = Math.max(0, 5000 - elapsed)
       setTimeout(() => {
         if (result) {
-          setResearch(result)
+          if (isAddingRef.current) {
+            setSessions(prev => [...prev, result])
+          } else {
+            setSessions([result])
+          }
           setCurrentDate(result.date)
         }
+        isAddingRef.current = false
         setLoading(false)
       }, minDelay)
     })
@@ -59,10 +80,17 @@ export function useResearch() {
     return cleanup
   }, [])
 
-  const clear = useCallback(() => {
-    setResearch(null)
+  const cancelAdd = useCallback(() => {
+    isAddingRef.current = false
     setLoading(false)
   }, [])
 
-  return { research, loading, currentDate, loadResearch, runNow, clear }
+  const clear = useCallback(() => {
+    setSessions([])
+    setLoading(false)
+  }, [])
+
+  const research = sessions.length > 0 ? sessions[0] : null
+
+  return { research, sessions, loading, currentDate, loadResearch, runNow, addResearch, cancelAdd, clear }
 }

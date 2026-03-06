@@ -1,5 +1,6 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-import { app, BrowserWindow, ipcMain, Notification, screen, clipboard, net, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, Notification, screen, clipboard, net, shell, dialog } from 'electron'
+import fs from 'fs'
 import { execFile } from 'child_process'
 import path from 'path'
 import os from 'os'
@@ -79,7 +80,7 @@ async function runResearch(): Promise<void> {
     if (config.notificationEnabled) {
       new Notification({
         title: '오늘의 AI 리서치 도착',
-        body: result.trends[0]?.text || '새로운 리서치가 준비되었습니다.'
+        body: result.trendHeadline || '새로운 리서치가 준비되었습니다.'
       }).show()
     }
   } catch (error: any) {
@@ -150,6 +151,14 @@ function setupIPC(): void {
     } catch {
       return null
     }
+  })
+  ipcMain.handle('save-markdown', (_e, filePath: string, content: string) => {
+    fs.writeFileSync(filePath, content, 'utf-8')
+  })
+  ipcMain.handle('pick-folder', async () => {
+    const result = await dialog.showOpenDialog({ properties: ['openDirectory'] })
+    if (result.canceled || result.filePaths.length === 0) return null
+    return result.filePaths[0]
   })
   ipcMain.handle('window-close', () => mainWindow?.hide())
   ipcMain.handle('window-minimize', () => mainWindow?.minimize())

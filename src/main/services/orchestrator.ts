@@ -15,8 +15,9 @@ export class ResearchOrchestrator {
   }
 
   async run(config: AppConfig): Promise<ResearchResult> {
+    const fetchDays = config.fetchPeriodDays || 7
     const [rssArticles, hnArticles] = await Promise.all([
-      this.rssCollector.collect(config.rssSources),
+      this.rssCollector.collect(config.rssSources, fetchDays),
       this.hnCollector.collect(config.keywords)
     ])
 
@@ -32,7 +33,8 @@ export class ResearchOrchestrator {
 
     const analysis = await this.analyzer.analyze(uniqueArticles, config.keywords)
 
-    const today = new Date().toISOString().split('T')[0]
+    const now = new Date()
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
     return {
       date: today,
       generatedAt: new Date().toISOString(),

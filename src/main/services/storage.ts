@@ -38,17 +38,21 @@ export class StorageService {
     fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2), 'utf-8')
   }
 
-  loadResearch(date: string): ResearchResult | null {
+  loadResearch(date: string): ResearchResult[] | null {
     try {
       const raw = fs.readFileSync(this.researchPath(date), 'utf-8')
-      return JSON.parse(raw)
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) return parsed.length > 0 ? parsed : null
+      return parsed ? [parsed] : null
     } catch {
       return null
     }
   }
 
   saveResearch(result: ResearchResult): void {
-    fs.writeFileSync(this.researchPath(result.date), JSON.stringify(result, null, 2), 'utf-8')
+    const existing = this.loadResearch(result.date) || []
+    existing.push(result)
+    fs.writeFileSync(this.researchPath(result.date), JSON.stringify(existing, null, 2), 'utf-8')
   }
 
   private get bookmarksPath(): string {

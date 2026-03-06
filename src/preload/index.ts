@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld('api', {
   windowMinimize: () => ipcRenderer.invoke('window-minimize'),
   windowMaximize: () => ipcRenderer.invoke('window-maximize'),
   shareText: (text: string) => ipcRenderer.invoke('share-text', text),
+  saveMarkdown: (filePath: string, content: string) => ipcRenderer.invoke('save-markdown', filePath, content),
+  pickFolder: () => ipcRenderer.invoke('pick-folder'),
   onResearchComplete: (callback: (result: any) => void) => {
     const handler = (_event: any, result: any) => callback(result)
     ipcRenderer.on('research-complete', handler)

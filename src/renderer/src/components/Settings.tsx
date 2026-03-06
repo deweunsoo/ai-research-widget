@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 interface RssSource {
   name: string
@@ -14,6 +15,8 @@ interface AppConfig {
   keywords: string[]
   notificationEnabled: boolean
   dataPath: string
+  fetchPeriodDays: number
+  downloadPath?: string
 }
 
 interface Props {
@@ -26,6 +29,7 @@ export default function Settings({ onBack, onRunNow }: Props) {
   const [newKeyword, setNewKeyword] = useState('')
   const [newRssName, setNewRssName] = useState('')
   const [newRssUrl, setNewRssUrl] = useState('')
+  const [showToast, setShowToast] = useState(false)
 
   useEffect(() => {
     window.api.getConfig().then(setConfig)
@@ -111,7 +115,7 @@ export default function Settings({ onBack, onRunNow }: Props) {
 
         {/* 리서치 시간 */}
         <SectionCard>
-          <SectionLabel>리서치 시간</SectionLabel>
+          <SectionLabel>매일 이 시간에 알려드려요</SectionLabel>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <AmPmToggle
               isAm={config.scheduleHour < 12}
@@ -140,9 +144,43 @@ export default function Settings({ onBack, onRunNow }: Props) {
           </div>
         </SectionCard>
 
+        {/* 수집 기간 */}
+        <SectionCard>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#8B95A1', letterSpacing: '-0.1px' }}>최근 며칠치를 볼까요?</span>
+            <Tooltip text="선택한 기간 내에 올라온 글만 모아서 분석해요. 기간이 길수록 더 많은 글을 한번에 확인할 수 있어요." />
+          </div>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {[3, 7, 14, 30].map(d => (
+              <button
+                key={d}
+                onClick={() => save({ fetchPeriodDays: d })}
+                style={{
+                  flex: 1,
+                  padding: '8px 0',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  borderRadius: '10px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  letterSpacing: '-0.2px',
+                  transition: 'all 0.15s',
+                  background: (config.fetchPeriodDays || 7) === d ? '#4E5968' : '#F2F4F6',
+                  color: (config.fetchPeriodDays || 7) === d ? '#fff' : '#8B95A1'
+                }}
+              >
+                {d}일
+              </button>
+            ))}
+          </div>
+        </SectionCard>
+
         {/* RSS 소스 */}
         <SectionCard>
-          <SectionLabel>RSS 소스</SectionLabel>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#8B95A1', letterSpacing: '-0.1px' }}>어디서 글을 가져올까요?</span>
+            <span style={{ fontSize: '12px', color: '#B0B8C1', fontWeight: 500 }}>{config.rssSources.length}/10</span>
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {config.rssSources.map((source, i) => (
               <div
@@ -188,16 +226,17 @@ export default function Settings({ onBack, onRunNow }: Props) {
             <input
               value={newRssName}
               onChange={e => setNewRssName(e.target.value)}
-              placeholder="이름"
+              placeholder="예: TechCrunch"
               style={{ ...inputStyle, flex: 1 }}
             />
             <input
               value={newRssUrl}
               onChange={e => setNewRssUrl(e.target.value)}
-              placeholder="RSS URL"
+              placeholder="주소 붙여넣기"
               style={{ ...inputStyle, flex: 2 }}
             />
             <button
+              disabled={config.rssSources.length >= 10}
               onClick={() => {
                 if (newRssName && newRssUrl && config.rssSources.length < 10) {
                   save({ rssSources: [...config.rssSources, { name: newRssName, url: newRssUrl, enabled: true }] })
@@ -206,17 +245,18 @@ export default function Settings({ onBack, onRunNow }: Props) {
                 }
               }}
               style={{
-                background: '#4E5968',
+                background: config.rssSources.length >= 10 ? '#D1D6DB' : '#4E5968',
                 border: 'none',
                 borderRadius: '10px',
-                cursor: 'pointer',
+                cursor: config.rssSources.length >= 10 ? 'not-allowed' : 'pointer',
                 fontSize: '16px',
                 color: '#fff',
                 padding: '0 14px',
                 flexShrink: 0,
                 fontWeight: 600,
                 display: 'flex',
-                alignItems: 'center'
+                alignItems: 'center',
+                opacity: config.rssSources.length >= 10 ? 0.5 : 1
               }}
             >
               +
@@ -226,7 +266,10 @@ export default function Settings({ onBack, onRunNow }: Props) {
 
         {/* 관심 키워드 */}
         <SectionCard>
-          <SectionLabel>관심 키워드</SectionLabel>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#8B95A1', letterSpacing: '-0.1px' }}>관심 키워드</span>
+            <span style={{ fontSize: '12px', color: '#B0B8C1', fontWeight: 500 }}>{config.keywords.length}/10</span>
+          </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
             {config.keywords.map((kw, i) => (
               <span key={i} style={{
@@ -287,11 +330,15 @@ export default function Settings({ onBack, onRunNow }: Props) {
           </div>
         </SectionCard>
 
+
       </div>
 
       {/* 하단 버튼 */}
       <button
-        onClick={onRunNow}
+        onClick={() => {
+          setShowToast(true)
+          setTimeout(() => setShowToast(false), 1800)
+        }}
         style={{
           width: '100%',
           padding: '14px',
@@ -310,13 +357,91 @@ export default function Settings({ onBack, onRunNow }: Props) {
         onMouseEnter={e => (e.currentTarget.style.background = '#1B64DA')}
         onMouseLeave={e => (e.currentTarget.style.background = '#3182F6')}
       >
-        저장
+        {showToast ? (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.25)'
+            }}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            저장 완료
+          </span>
+        ) : '저장'}
       </button>
     </>
   )
 }
 
 /* ── Sub-components ── */
+
+function Tooltip({ text }: { text: string }) {
+  const [show, setShow] = useState(false)
+  const ref = useRef<HTMLSpanElement>(null)
+  const [pos, setPos] = useState({ top: 0, left: 0 })
+
+  const handleEnter = () => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect()
+      setPos({ top: rect.top - 6, left: rect.left + rect.width / 2 })
+    }
+    setShow(true)
+  }
+
+  return (
+    <span
+      ref={ref}
+      style={{ display: 'inline-flex', alignItems: 'center', cursor: 'default' }}
+      onMouseEnter={handleEnter}
+      onMouseLeave={() => setShow(false)}
+    >
+      <span style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '18px',
+        height: '18px',
+        borderRadius: '50%',
+        background: '#8B95A1',
+        fontSize: '12px',
+        fontWeight: 700,
+        color: '#fff',
+        lineHeight: 1
+      }}>?</span>
+      {show && createPortal(
+        <div style={{
+          position: 'fixed',
+          top: pos.top,
+          left: Math.max(110, Math.min(pos.left, window.innerWidth - 110)),
+          transform: 'translate(-50%, -100%)',
+          background: '#333D4B',
+          color: '#fff',
+          fontSize: '12px',
+          fontWeight: 400,
+          lineHeight: 1.5,
+          padding: '8px 12px',
+          borderRadius: '8px',
+          width: '200px',
+          whiteSpace: 'normal',
+          letterSpacing: '-0.2px',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+          zIndex: 9999,
+          pointerEvents: 'none'
+        }}>
+          {text}
+        </div>,
+        document.body
+      )}
+    </span>
+  )
+}
 
 function SectionCard({ children }: { children: React.ReactNode }) {
   return (

@@ -58,6 +58,7 @@ export interface AppConfig {
   keywords: string[]
   notificationEnabled: boolean
   dataPath: string
+  fetchPeriodDays: number
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -74,5 +75,6 @@ export const DEFAULT_CONFIG: AppConfig = {
   ],
   keywords: ['AI Agent', 'UX Design', 'Generative UI', 'AI Design Tools'],
   notificationEnabled: true,
-  dataPath: '~/ai-research-widget/data'
+  dataPath: '~/ai-research-widget/data',
+  fetchPeriodDays: 7
 }

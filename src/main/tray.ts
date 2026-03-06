@@ -17,7 +17,7 @@ export class TrayManager {
       { label: 'Quit', click: () => { window.destroy(); process.exit(0) } }
     ])
 
-    this.tray.setToolTip('AI Research Widget')
+    this.tray.setToolTip('PRINGSEARCH')
     this.tray.setContextMenu(contextMenu)
     this.tray.on('click', () => {
       window.isVisible() ? window.hide() : window.show()
